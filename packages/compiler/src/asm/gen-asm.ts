@@ -265,7 +265,7 @@ const transformNormalNode = (node: NormalNode) => {
             return 'stop';
         }
         case IRNodeType.UNIT_BIND: {
-            return `ubind ${node.unit}`;
+            return `ubind ${transformValue(node.unit)}`;
         }
         case IRNodeType.IDLE: {
             return 'ucontrol idle';
