@@ -15,8 +15,16 @@ const transformValue = (value: Value) => {
         return 'false';
     }
 
+    if (value.value === 0) {
+        return '0';
+    }
+
     if (!value.value) {
         return 'null';
+    }
+
+    if (typeof value.value === 'string') {
+        return JSON.stringify(value.value);
     }
 
     return value.value.toString();

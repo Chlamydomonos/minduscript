@@ -206,7 +206,7 @@ export const parser = createParser('type')<ExpandedToken, Node>()(
             .factory((identifier, t, expression) => ({
                 ...buildNodeBase(identifier, t, expression),
                 statementType: StatementType.ASSIGN,
-                assignType: AssignType.SIMPLE,
+                assignType: t.assignType,
                 variableName: identifier.raw,
                 expression,
             }));
@@ -216,7 +216,7 @@ export const parser = createParser('type')<ExpandedToken, Node>()(
             .factory((identifier, t, expression) => ({
                 ...buildNodeBase(identifier, t, expression),
                 statementType: StatementType.ASSIGN,
-                assignType: AssignType.SIMPLE,
+                assignType: t.assignType,
                 variableName: identifier.raw,
                 expression,
             }));

@@ -122,11 +122,21 @@ const removeDefsFromEnv = (node: IRNode, env: Map<string, Value>) => {
     }
 };
 
+const isBlockBoundary = (node: IRNode): boolean => {
+    return node.type === IRNodeType.LABEL || node.type === IRNodeType.JUMP || node.type === IRNodeType.CONDITIONAL_JUMP;
+};
+
 export const propagateAssignValues: OptimizerPass = (program) => {
     const env = new Map<string, Value>();
     const changedRef = { changed: false };
 
     const body: IRNode[] = program.body.map((node) => {
+        if (node.type === IRNodeType.LABEL) {
+            // 标签可能有多个前驱，跨块传播会破坏正确性。
+            env.clear();
+            return node;
+        }
+
         const mappedNode = mapValuesDeep(node, env, changedRef) as IRNode;
 
         removeDefsFromEnv(mappedNode, env);
@@ -138,6 +148,10 @@ export const propagateAssignValues: OptimizerPass = (program) => {
             }
 
             env.set(mappedNode.target, cloneValue(resolved));
+        }
+
+        if (isBlockBoundary(mappedNode)) {
+            env.clear();
         }
 
         return mappedNode;

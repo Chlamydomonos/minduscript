@@ -1,4 +1,5 @@
 import {
+    AssignType,
     ControlType,
     ExpressionChildNode,
     ExpressionNode,
@@ -342,11 +343,92 @@ const buildStatement = (macroNameMap: MacroNameMap, context: IRBuildContext, sta
             break;
         }
         case StatementType.ASSIGN: {
-            result.push({
-                type: IRNodeType.ASSIGN,
-                target: getVarName(context, statement.variableName),
-                value: buildIdentifier(expandExpression(macroNameMap, context, statement.expression, result)),
-            });
+            const target = getVarName(context, statement.variableName);
+            const expressionValue = expandExpression(macroNameMap, context, statement.expression, result);
+
+            if (statement.assignType == AssignType.SIMPLE) {
+                result.push({
+                    type: IRNodeType.ASSIGN,
+                    target,
+                    value: buildIdentifier(expressionValue),
+                });
+                break;
+            }
+
+            if (statement.assignType == AssignType.OR) {
+                const leftBool = `$${counter.next()}`;
+                const rightBool = `$${counter.next()}`;
+                result.push({
+                    type: IRNodeType.NE,
+                    target: leftBool,
+                    left: buildIdentifier(target),
+                    right: buildLiteral(0),
+                });
+                result.push({
+                    type: IRNodeType.NE,
+                    target: rightBool,
+                    left: buildIdentifier(expressionValue),
+                    right: buildLiteral(0),
+                });
+                result.push({
+                    type: IRNodeType.BITOR,
+                    target,
+                    left: buildIdentifier(leftBool),
+                    right: buildIdentifier(rightBool),
+                });
+                break;
+            }
+
+            const binaryOp = {
+                type: undefined as any as IRNodeType,
+                target,
+                left: buildIdentifier(target),
+                right: buildIdentifier(expressionValue),
+            };
+
+            switch (statement.assignType) {
+                case AssignType.ADD:
+                    binaryOp.type = IRNodeType.ADD;
+                    break;
+                case AssignType.SUB:
+                    binaryOp.type = IRNodeType.SUB;
+                    break;
+                case AssignType.MUL:
+                    binaryOp.type = IRNodeType.MUL;
+                    break;
+                case AssignType.DIV:
+                    binaryOp.type = IRNodeType.DIV;
+                    break;
+                case AssignType.IDIV:
+                    binaryOp.type = IRNodeType.IDIV;
+                    break;
+                case AssignType.MOD:
+                    binaryOp.type = IRNodeType.MOD;
+                    break;
+                case AssignType.POW:
+                    binaryOp.type = IRNodeType.POW;
+                    break;
+                case AssignType.AND:
+                    binaryOp.type = IRNodeType.AND;
+                    break;
+                case AssignType.SHL:
+                    binaryOp.type = IRNodeType.SHL;
+                    break;
+                case AssignType.SHR:
+                    binaryOp.type = IRNodeType.SHR;
+                    break;
+                case AssignType.BITAND:
+                    binaryOp.type = IRNodeType.BITAND;
+                    break;
+                case AssignType.BITOR:
+                    binaryOp.type = IRNodeType.BITOR;
+                    break;
+                default:
+                    binaryOp.type = IRNodeType.XOR;
+                    break;
+            }
+
+            result.push(binaryOp as any);
             break;
         }
         case StatementType.CONTROL: {
