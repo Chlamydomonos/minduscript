@@ -1,0 +1,26 @@
+{
+    "name": "minduscript",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "bin": "dist/main.js",
+    "files": [
+        "dist",
+        ".npmignore"
+    ],
+    "dependencies": {
+        "@minduscript/compiler": "workspace:*",
+        "commander": "^14.0.3"
+    },
+    "devDependencies": {
+        "@types/node": "^25.5.0",
+        "rimraf": "^6.1.3",
+        "typescript": "^5.9.3"
+    },
+    "scripts": {
+        "build:packages": "cd packages/lexer && pnpm build && cd ../parser && pnpm build && cd ../compiler && pnpm build",
+        "build": "pnpm build:packages && rimraf dist && tsc",
+        "upload:packages": "cd packages/lexer && pnpm publish --access public && cd ../parser && pnpm publish --access public && cd ../compiler && pnpm publish --access public",
+        "upload": "pnpm upload:packages && pnpm publish --access public"
+    }
+}

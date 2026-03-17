@@ -1,0 +1,26 @@
+{
+    "name": "@minduscript/parser",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "bin": {
+        "parse-minduscript": "dist/exe.js"
+    },
+    "files": [
+        "dist",
+        ".npmignore"
+    ],
+    "devDependencies": {
+        "@types/node": "^25.5.0",
+        "rimraf": "^6.1.3",
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "@minduscript/lexer": "workspace:*",
+        "chlamydomonos-parser": "^1.0.10",
+        "commander": "^14.0.3"
+    },
+    "scripts": {
+        "build": "rimraf dist && tsc"
+    }
+}
