@@ -160,8 +160,8 @@
 "^" { col += YYLeng(); return 148; }
 "~" { col += YYLeng(); return 149; }
 
-[A-Za-z][A-Za-z0-9]* { col += YYLeng(); return 150; } // 标识符
-"@"[A-Za-z][A-Za-z0-9]* { col += YYLeng(); return 151; } // Mindustry标识符
+[_A-Za-z][_A-Za-z0-9]* { col += YYLeng(); return 150; } // 标识符
+"@"([_A-Za-z]|"-")([_A-Za-z0-9]|"-")* { col += YYLeng(); return 151; } // Mindustry标识符
 -?[0-9]+("."[0-9]+)? { col += YYLeng(); return 152; } // 数字字面量
 \"[^\"]*\" { col += YYLeng(); return 153; } // 字符串字面量
 "%"[a-f0-9]{6} { col += YYLeng(); return 154; } // 颜色
